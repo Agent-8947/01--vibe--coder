@@ -217,7 +217,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                         className="w-full h-full object-cover"
                         alt="Hero background"
                     />
-                    <div className="absolute inset-0 bg-black/40" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
                 </div>
             )}
 
@@ -238,16 +238,16 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                     <h1 style={{
                         ...titleStyle,
                         ...getEntranceStyle(0),
-                        textShadow: isFullBg ? '0 2px 10px rgba(0,0,0,0.8)' : 'none'
-                    }} className="tracking-tight leading-tight">
+                        textShadow: isFullBg ? '0 4px 30px rgba(0,0,0,1)' : 'none'
+                    }} className="tracking-tighter leading-none font-black">
                         {getTranslatedText('title')}
                     </h1>
 
                     <p style={{
                         ...descStyle,
                         ...getEntranceStyle(1),
-                        textShadow: isFullBg ? '0 1px 8px rgba(0,0,0,0.6)' : 'none'
-                    }} className={`opacity-80 ${layout.alignment === 'center' ? 'mx-auto' : ''}`}>
+                        textShadow: isFullBg ? '0 2px 20px rgba(0,0,0,0.8)' : 'none'
+                    }} className={`opacity-90 max-w-2xl ${layout.alignment === 'center' ? 'mx-auto' : ''}`}>
                         {getTranslatedText('description')}
                     </p>
 
