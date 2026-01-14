@@ -117,8 +117,8 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                     </div>
                 )}
 
-                {/* Interactive Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {/* Interactive Grid - Flexible row */}
+                <div className="flex flex-wrap justify-center gap-4">
                     {data.categories?.map((category: any, index: number) => (
                         <motion.div
                             key={category.id}
@@ -126,11 +126,11 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.05, duration: animDuration }}
-                            className="relative"
+                            className="flex-1 min-w-[100px] max-w-[180px]"
                         >
                             <button
                                 onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                                className="w-full p-4 md:p-6 border transition-all duration-300 hover:scale-105 active:scale-95 group"
+                                className="w-full p-4 border transition-all duration-300 hover:scale-105 active:scale-95 group flex flex-col items-center"
                                 style={{
                                     borderColor: selectedCategory === category.id ? category.color : border,
                                     borderRadius: `${gl07[0].value}px`,
@@ -140,7 +140,7 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                             >
                                 {/* Icon */}
                                 <div
-                                    className="mb-0 md:mb-4 transition-all duration-300 flex justify-center"
+                                    className="mb-2 transition-all duration-300 flex justify-center"
                                     style={{
                                         color: selectedCategory === category.id ? category.color : textPrim,
                                         opacity: selectedCategory === category.id ? 1 : 0.5
@@ -149,9 +149,9 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                                     {getIcon(category.icon)}
                                 </div>
 
-                                {/* Name - Hidden on mobile */}
+                                {/* Name - Always visible now */}
                                 <div
-                                    className="hidden md:block text-sm font-black uppercase transition-all duration-300"
+                                    className="text-[10px] md:text-sm font-black uppercase transition-all duration-300 text-center"
                                     style={{
                                         color: selectedCategory === category.id ? category.color : textPrim,
                                         fontFamily: 'var(--dna-font-family)'
@@ -160,8 +160,8 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                                     {category.name}
                                 </div>
 
-                                {/* Count - Hidden on mobile */}
-                                <div className="hidden md:block text-xs opacity-30 mt-1">
+                                {/* Count - Hidden on very small screens, visible on md+ */}
+                                <div className="hidden md:block text-[8px] md:text-xs opacity-30 mt-1">
                                     {category.technologies?.length || 0} tools
                                 </div>
                             </button>
