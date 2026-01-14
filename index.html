@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yura Rulev — Vibe Coder</title>
+    <meta name="description"
+        content="I automate the connection between design and code using architectural manifests and JSON configurations. Interface-first methodology." />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://001-ai-editor.vercel.app/" />
+    <meta property="og:title" content="Yura Rulev — Vibe Coder" />
+    <meta property="og:description" content="Automating design-to-code connection through architectural manifests." />
+    <meta property="og:image" content="/preview.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://001-ai-editor.vercel.app/" />
+    <meta property="twitter:title" content="Yura Rulev — Vibe Coder" />
+    <meta property="twitter:description"
+        content="Automating design-to-code connection through architectural manifests." />
+    <meta property="twitter:image" content="/preview.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #09090B;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #3B82F6;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        [data-theme='light'] body {
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div class="loader"></div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

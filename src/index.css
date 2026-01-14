@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dna-unit: 16px;
+  --dna-bg: #09090B;
+  --dna-surface: #18181B;
+  --dna-accent: #3B82F6;
+  --dna-text-prim: #FFFFFF;
+  --dna-text-sec: #A1A1AA;
+  --dna-border: #27272A;
+  --dna-font-family: 'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: var(--dna-font-family); 
+  background-color: var(--dna-bg); 
+  color: var(--dna-text-prim);
+  -webkit-font-smoothing: antialiased;
+}
