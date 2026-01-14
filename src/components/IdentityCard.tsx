@@ -62,97 +62,107 @@ export const IdentityCard: React.FC<{ id: string, localOverrides: any, isPreview
     return (
         <section id={id} className="w-full flex justify-center px-4" style={{ paddingTop: `${paddingY}px`, paddingBottom: `${paddingY}px` }}>
             <motion.div
-                className="max-w-sm w-full p-6 border flex flex-col items-center"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="max-w-sm w-full p-8 border relative overflow-hidden group"
                 style={{
-                    backgroundColor: localOverrides.style?.bgFill || 'transparent',
-                    borderColor: gl02[5].value + '40',
+                    backgroundColor: localOverrides.style?.bgFill || 'rgba(255,255,255,0.02)',
+                    backdropFilter: 'blur(20px)',
+                    borderColor: `${gl02[2].value}20`,
                     borderRadius: `${gl07[0].value}px`,
-                    fontFamily: 'var(--dna-font-family)'
+                    fontFamily: 'var(--dna-font-family)',
+                    boxShadow: `0 20px 50px -12px ${gl02[2].value}15`
                 }}
             >
-                {/* Заголовок и подзаголовок (с динамическими размерами) */}
-                {(data.title || data.subtitle) && (
-                    <div className="w-full text-center mb-6">
-                        {data.title && (
-                            <h3
-                                className="font-black uppercase tracking-tight mb-1"
-                                style={{
-                                    color: gl02[3].value,
-                                    fontSize: `${titleSize}px`
-                                }}
-                            >
-                                {data.title}
-                            </h3>
-                        )}
-                        {data.subtitle && (
-                            <p
-                                className="opacity-50 uppercase tracking-wider"
-                                style={{
-                                    color: gl02[3].value,
-                                    fontSize: `${subtitleSize}px`
-                                }}
-                            >
-                                {data.subtitle}
-                            </p>
-                        )}
-                    </div>
-                )}
+                {/* Decorative Elements */}
+                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t" style={{ borderColor: accent }} />
+                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t" style={{ borderColor: accent }} />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b" style={{ borderColor: accent }} />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b" style={{ borderColor: accent }} />
 
-                {/* Три фото в ряд (увеличены на ~15%) */}
-                <div className="flex justify-center items-center gap-4 mb-6">
-                    {data.images.map((img: any, i: number) => (
-                        <div
-                            key={i}
-                            onClick={() => handleImageClick(i)}
-                            className={`relative overflow-hidden border border-black/5 shadow-sm group ${isPreview ? 'cursor-pointer hover:border-blue-500/50 transition-all' : ''} ${i === 1 ? 'w-20 h-20' : 'w-14 h-14'}`}
-                            style={{ borderRadius: img.shape === 'circle' ? '999px' : `${gl07[3].value}px` }}
-                        >
-                            <img src={img.url} className="w-full h-full object-cover" alt="" />
-                            {isPreview && (
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <Upload className="text-white" size={i === 1 ? 24 : 18} />
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                {/* Scanline Effect */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+
+                {/* Header */}
+                <div className="w-full flex justify-between items-start mb-8">
+                    <div className="flex flex-col">
+                        <span className="text-[8px] font-black tracking-[0.3em] opacity-30 leading-none mb-1">SYSTEM://AUTH</span>
+                        <h3 className="font-black uppercase tracking-tight leading-none" style={{ color: gl02[3].value, fontSize: `${titleSize}px` }}>
+                            {data.title}
+                        </h3>
+                    </div>
+                    <div className="text-[10px] font-mono opacity-20">#{id.slice(0, 8)}</div>
                 </div>
 
-                {isPreview && (
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                    />
-                )}
+                {/* Primary Image Slot */}
+                <div className="relative mb-8 group/img">
+                    <div
+                        onClick={() => handleImageClick(1)}
+                        className={`relative w-24 h-24 overflow-hidden border-2 transition-all duration-500 ${isPreview ? 'cursor-pointer group-hover/img:scale-105' : ''}`}
+                        style={{
+                            borderColor: `${accent}40`,
+                            borderRadius: data.images[1]?.shape === 'circle' ? '999px' : `${gl07[3].value}px`
+                        }}
+                    >
+                        <img src={data.images[1]?.url} className="w-full h-full object-cover" alt="Primary Identity" />
+                        {isPreview && (
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                                <Upload className="text-white" size={24} />
+                            </div>
+                        )}
+                    </div>
+                    {/* Animated Ring */}
+                    <div className="absolute -inset-2 border border-dashed rounded-full opacity-10 animate-[spin_20s_linear_infinite]" style={{ borderColor: accent }} />
+                </div>
 
-                {/* Кнопки (вертикально, крупнее) */}
-                <div className="flex flex-col items-stretch gap-3 mb-4 w-full">
+                {/* Metadata Grid */}
+                <div className="w-full space-y-4 mb-8">
+                    <div className="flex justify-between border-b pb-2" style={{ borderColor: `${gl02[5].value}20` }}>
+                        <span className="text-[9px] font-black opacity-30 uppercase tracking-widest">Classification</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: accent }}>{data.subtitle}</span>
+                    </div>
+                    <div className="flex justify-between border-b pb-2" style={{ borderColor: `${gl02[5].value}20` }}>
+                        <span className="text-[9px] font-black opacity-30 uppercase tracking-widest">Visual Hash</span>
+                        <div className="flex gap-2">
+                            {data.images.filter((_: any, i: number) => i !== 1).map((img: any, i: number) => (
+                                <div
+                                    key={i}
+                                    onClick={() => handleImageClick(i === 0 ? 0 : 2)}
+                                    className={`w-6 h-6 border bg-black/10 overflow-hidden ${isPreview ? 'cursor-pointer' : ''}`}
+                                    style={{
+                                        borderColor: `${gl02[5].value}40`,
+                                        borderRadius: '2px'
+                                    }}
+                                >
+                                    <img src={img.url} className="w-full h-full object-cover grayscale opacity-50" alt="" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Action Area */}
+                <div className="w-full flex flex-col gap-4">
                     {data.buttons.map((btn: any, i: number) => (
                         <a
                             key={i}
                             href={btn.url}
                             onClick={handleButtonClick}
-                            className="px-6 py-3 text-xs font-black uppercase tracking-tight text-center transition-all hover:scale-105"
-                            style={{ backgroundColor: accent, color: '#FFF', borderRadius: '6px' }}
+                            className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] text-center transition-all relative overflow-hidden group/btn"
+                            style={{ backgroundColor: accent, color: '#FFF', borderRadius: '4px' }}
                         >
-                            {btn.label}
+                            <span className="relative z-10">{btn.label}</span>
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
                         </a>
                     ))}
-                </div>
 
-                {/* Текст (с динамическим размером) */}
-                <div
-                    className="text-center opacity-60 uppercase font-bold tracking-widest"
-                    style={{
-                        color: gl02[3].value,
-                        fontSize: `${textSize}px`,
-                        lineHeight: textLineHeight,
-                        marginTop: `${textSpacing}px`
-                    }}
-                >
-                    {data.text}
+                    <div
+                        className="text-[9px] text-center opacity-40 font-mono tracking-tighter"
+                        style={{ color: gl02[3].value, fontSize: `${textSize}px` }}
+                    >
+                        {data.text || 'ENCRYPTED_STREAM_ID: 0x9942'}
+                    </div>
                 </div>
             </motion.div>
         </section>

@@ -118,52 +118,66 @@ export const TechStack: React.FC<{ id: string, localOverrides: any }> = ({ id, l
                 )}
 
                 {/* Interactive Grid - Flexible row */}
-                <div className="flex flex-wrap justify-center gap-4">
+                <div className="flex flex-wrap justify-center gap-6">
                     {data.categories?.map((category: any, index: number) => (
                         <motion.div
                             key={category.id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.05, duration: animDuration }}
-                            className="flex-1 min-w-[100px] max-w-[180px]"
+                            className="flex-1 min-w-[130px] max-w-[200px]"
                         >
                             <button
                                 onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                                className="w-full p-4 border transition-all duration-300 hover:scale-105 active:scale-95 group flex flex-col items-center"
+                                className="w-full p-6 border transition-all duration-500 hover:-translate-y-1 group flex flex-col items-center relative overflow-hidden"
                                 style={{
-                                    borderColor: selectedCategory === category.id ? category.color : border,
+                                    borderColor: selectedCategory === category.id ? category.color : `${border}40`,
                                     borderRadius: `${gl07[0].value}px`,
-                                    backgroundColor: selectedCategory === category.id ? `${category.color}10` : 'rgba(0,0,0,0.02)',
-                                    borderWidth: selectedCategory === category.id ? '2px' : 'var(--ui-stroke-width)'
+                                    backgroundColor: selectedCategory === category.id ? `${category.color}15` : 'rgba(255,255,255,0.02)',
+                                    backdropFilter: 'blur(10px)',
+                                    boxShadow: selectedCategory === category.id ? `0 10px 30px -10px ${category.color}40` : 'none'
                                 }}
                             >
+                                {/* Selection Indicator */}
+                                {selectedCategory === category.id && (
+                                    <motion.div
+                                        layoutId="category-glow"
+                                        className="absolute inset-0 pointer-events-none"
+                                        style={{
+                                            background: `radial-gradient(circle at center, ${category.color}20 0%, transparent 70%)`
+                                        }}
+                                    />
+                                )}
+
                                 {/* Icon */}
                                 <div
-                                    className="mb-2 transition-all duration-300 flex justify-center"
+                                    className="mb-4 transition-all duration-500 flex justify-center scale-110"
                                     style={{
                                         color: selectedCategory === category.id ? category.color : textPrim,
-                                        opacity: selectedCategory === category.id ? 1 : 0.5
+                                        opacity: selectedCategory === category.id ? 1 : 0.4
                                     }}
                                 >
                                     {getIcon(category.icon)}
                                 </div>
 
-                                {/* Name - Always visible now */}
+                                {/* Name */}
                                 <div
-                                    className="text-[10px] md:text-sm font-black uppercase transition-all duration-300 text-center"
+                                    className="text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 text-center"
                                     style={{
                                         color: selectedCategory === category.id ? category.color : textPrim,
-                                        fontFamily: 'var(--dna-font-family)'
+                                        opacity: selectedCategory === category.id ? 1 : 0.6
                                     }}
                                 >
                                     {category.name}
                                 </div>
 
                                 {/* Count - Hidden on very small screens, visible on md+ */}
-                                <div className="hidden md:block text-[8px] md:text-xs opacity-30 mt-1">
-                                    {category.technologies?.length || 0} tools
-                                </div>
+                                {category.technologies?.length > 0 && (
+                                    <div className="hidden md:block text-[9px] font-bold uppercase tracking-widest opacity-20 mt-2">
+                                        {category.technologies.length} Tools
+                                    </div>
+                                )}
                             </button>
                         </motion.div>
                     ))}
