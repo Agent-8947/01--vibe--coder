@@ -11,7 +11,16 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides, currentLang = 'en' }) => {
     const { globalSettings, viewportMode } = useStore();
-    const isMobileMode = viewportMode === 'mobile';
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const isMobileMode = isMobile || viewportMode === 'mobile';
 
     // DNA Binding Engine
     const gl01 = globalSettings['GL01'].params; // Typography
@@ -176,14 +185,18 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
     const hasImage = overrides.media?.showImage && overrides.media?.imageUrl;
     const mediaPos = overrides.media?.imagePosition || 'right';
 
-    // Mobile: always use background mode with 80% opacity
-    // Desktop: respect configured position
-    const effectivePos = isMobileMode && hasImage ? 'background' : mediaPos;
+    // Mobile: Stack mode (Image Top, Text Bottom)
+    // We treat mobile as 'top' position to allow stacking
+    const effectivePos = isMobileMode && hasImage ? 'top' : mediaPos;
     const isSplit = hasImage && ['left', 'right', 'top', 'bottom'].includes(effectivePos);
-    const isFullBg = hasImage && effectivePos === 'background';
+    // On mobile, we do NOT use full background essentially, we split. 
+    // Unless the USER specifically set 'background' which we might want to respect, 
+    // BUT the user request says "photo first, text under". 
+    // So for mobile we force split-top logic if an image exists.
+    const isFullBg = hasImage && (overrides.media?.imagePosition === 'background' && !isMobileMode);
 
-    // Mobile uses 92% opacity, desktop uses configured opacity
-    const imageOpacity = isMobileMode ? 0.92 : (overrides.media?.imageOpacity || 100) / 100;
+    // Mobile uses normal opacity or overrides
+    const imageOpacity = (overrides.media?.imageOpacity || 100) / 100;
 
     const shapeStyles: Record<string, string> = {
         square: 'aspect-square rounded-none',
@@ -191,7 +204,8 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
         portrait: 'aspect-[3/4] rounded-2xl',
         landscape: 'aspect-[16/9] rounded-2xl'
     };
-    const shapeClass = shapeStyles[overrides.media?.shape] || (mediaPos === 'top' || mediaPos === 'bottom' ? shapeStyles.landscape : 'aspect-video md:aspect-square lg:aspect-[4/3] rounded-2xl');
+    const shapeClass = shapeStyles[overrides.media?.shape] ||
+        ((mediaPos === 'top' || mediaPos === 'bottom' || isMobileMode) ? 'aspect-[4/3] w-full rounded-2xl' : 'aspect-video md:aspect-square lg:aspect-[4/3] rounded-2xl');
 
     return (
         <section id={id} style={containerStyle} className="w-full relative overflow-hidden group">
@@ -206,8 +220,8 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                 }
             `}</style>
 
-            {/* Background Image Overlay */}
-            {isFullBg && (
+            {/* Background "Substrate" Layer (Desktop Full BG only) */}
+            {hasImage && isFullBg && (
                 <div
                     className="absolute inset-0 z-0 transition-opacity duration-700 pointer-events-none"
                     style={{ opacity: imageOpacity }}
@@ -217,7 +231,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                         className="w-full h-full object-cover"
                         alt="Hero background"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+                    <div className="absolute inset-0 bg-black/30" />
                 </div>
             )}
 
@@ -227,60 +241,76 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 blur-[120px] rounded-full" />
             </div>
 
-            <div className={`relative z-10 max-w-7xl mx-auto w-full flex ${isMobileMode ? 'flex-col' :
-                (mediaPos === 'left' ? 'flex-row-reverse' :
-                    mediaPos === 'top' ? 'flex-col-reverse' :
-                        mediaPos === 'bottom' ? 'flex-col' : 'flex-row')
-                } items-center gap-12 md:gap-20`}>
+            <div className={`relative z-10 max-w-7xl mx-auto w-full flex flex-col items-center gap-8 md:gap-20 transition-all duration-500
+                ${!isMobileMode ? (
+                    mediaPos === 'left' ? 'md:flex-row' :
+                        mediaPos === 'top' ? 'md:flex-col' :
+                            mediaPos === 'bottom' ? 'md:flex-col-reverse' :
+                                'md:flex-row-reverse'
+                ) : ''}
+            `}>
 
-                {/* Text Content */}
-                <div className={`${isSplit ? 'w-full md:w-2/5' : 'max-w-4xl'} space-y-8 ${layout.alignment === 'center' ? 'text-center mx-auto' : layout.alignment === 'right' ? 'text-right ml-auto' : 'text-left mr-auto'}`}>
+                {/* 1. IMAGE CONTAINER (First in DOM for Mobile Stack) */}
+                {hasImage && !isFullBg && (
+                    <div style={getEntranceStyle(3)} className={`
+                        relative w-full overflow-hidden
+                        ${isMobileMode ? 'h-[50vh] min-h-[400px] mb-8' : 'hidden md:flex md:w-1/2 justify-center items-center'}
+                    `}>
+                        <div
+                            className={`relative w-full h-full overflow-hidden
+                                ${isMobileMode ? 'rounded-b-3xl' : shapeClass}
+                            `}
+                            style={{
+                                boxShadow: isMobileMode ? 'none' : `0px ${parseFloat(gl06[0]?.value || '10')}px ${parseFloat(gl06[1]?.value || '40')}px rgba(0,0,0,0.3)`,
+                                border: isMobileMode ? 'none' : `${gl06[4]?.value || '1'}px solid rgba(255,255,255,0.1)`,
+                                animation: (!isMobileMode && overrides.media?.levitation) ? `levitate-${id} ${overrides.media?.levitationSpeed || 3}s ease-in-out infinite` : 'none',
+                            }}
+                        >
+                            <img
+                                src={overrides.media.imageUrl}
+                                className={`w-full h-full object-cover transition-transform duration-1000 
+                                    ${isMobileMode ? 'scale-100' : 'group-hover:scale-110'}
+                                `}
+                                style={{
+                                    opacity: imageOpacity,
+                                    transform: isMobileMode ? 'none' : `scale(${(overrides.media?.imageScale || 110) / 100})`
+                                }}
+                                alt="Hero media"
+                            />
+                            {/* Mobile visual separation gradient at bottom of image */}
+                            {isMobileMode && <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-50" />}
+                        </div>
+                    </div>
+                )}
+
+                {/* 2. TEXT CONTENT (Second in DOM for Mobile Stack) */}
+                <div className={`
+                    flex flex-col
+                    ${isMobileMode ? 'w-full px-6' : (isSplit ? 'md:w-[45%]' : 'w-full max-w-4xl')}
+                    ${layout.alignment === 'center' && !isMobileMode ? 'text-center mx-auto' : 'text-left'}
+                `}>
                     <h1 style={{
                         ...titleStyle,
                         ...getEntranceStyle(0),
-                        textShadow: isFullBg ? '0 4px 30px rgba(0,0,0,1)' : 'none'
-                    }} className="tracking-tighter leading-none font-black">
+                        fontSize: isMobileMode ? '3.5rem' : undefined,
+                        lineHeight: isMobileMode ? '0.9' : undefined,
+                    }} className="font-black tracking-tighter mb-6">
                         {getTranslatedText('title')}
                     </h1>
 
                     <p style={{
                         ...descStyle,
                         ...getEntranceStyle(1),
-                        textShadow: isFullBg ? '0 2px 20px rgba(0,0,0,0.8)' : 'none'
-                    }} className={`opacity-90 max-w-2xl ${layout.alignment === 'center' ? 'mx-auto' : ''}`}>
+                    }} className={`opacity-80 max-w-2xl font-medium tracking-tight text-lg md:text-2xl mb-8 ${layout.alignment === 'center' && !isMobileMode ? 'mx-auto' : ''}`}>
                         {getTranslatedText('description')}
                     </p>
 
-                    <div style={getEntranceStyle(2)} className={`flex items-center gap-4 pt-6 ${layout.alignment === 'center' ? 'justify-center' : layout.alignment === 'right' ? 'justify-end' : 'justify-start'}`}>
+                    <div style={getEntranceStyle(2)} className={`flex items-center gap-4 ${layout.alignment === 'center' && !isMobileMode ? 'justify-center' : 'justify-start'}`}>
                         {safeData.primaryBtnVisible !== false && renderButton(getTranslatedText('primaryBtnText'), true)}
                         {safeData.secondaryBtnVisible !== false && renderButton(getTranslatedText('secondaryBtnText'), false)}
                     </div>
                 </div>
 
-                {/* Split Image Media (Hidden on mobile) */}
-                {isSplit && (
-                    <div style={getEntranceStyle(3)} className={`${isMobileMode ? 'hidden' : ''} ${(effectivePos === 'top' || effectivePos === 'bottom') ? 'w-full max-w-5xl' : 'w-full md:w-3/5'} relative`}>
-                        <div
-                            className={`relative overflow-hidden ${shapeClass} ${isMobileMode ? 'max-h-[300px]' : ''}`}
-                            style={{
-                                boxShadow: `0px ${parseFloat(gl06[0]?.value || '10')}px ${parseFloat(gl06[1]?.value || '40')}px rgba(0,0,0,0.3)`,
-                                border: `${gl06[4]?.value || '1'}px solid rgba(255,255,255,0.1)`,
-                                animation: overrides.media?.levitation ? `levitate-${id} ${overrides.media?.levitationSpeed || 3}s ease-in-out infinite` : 'none',
-                                backdropFilter: 'blur(10px)',
-                            }}
-                        >
-                            <img
-                                src={overrides.media.imageUrl}
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                style={{
-                                    opacity: (overrides.media.imageOpacity || 100) / 100,
-                                    transform: `scale(${(overrides.media?.imageScale || 110) / 100})`
-                                }}
-                                alt="Hero media"
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
         </section>
     );
