@@ -234,11 +234,11 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                 } items-center gap-12 md:gap-20`}>
 
                 {/* Text Content */}
-                <div className={`${isSplit ? 'w-full md:w-1/2' : 'max-w-4xl'} space-y-8 ${layout.alignment === 'center' ? 'text-center mx-auto' : layout.alignment === 'right' ? 'text-right ml-auto' : 'text-left mr-auto'}`}>
+                <div className={`${isSplit ? 'w-full md:w-2/5' : 'max-w-4xl'} space-y-8 ${layout.alignment === 'center' ? 'text-center mx-auto' : layout.alignment === 'right' ? 'text-right ml-auto' : 'text-left mr-auto'}`}>
                     <h1 style={{
                         ...titleStyle,
                         ...getEntranceStyle(0),
-                        textShadow: isFullBg ? '0 1px 8px rgba(0,0,0,0.4)' : 'none'
+                        textShadow: isFullBg ? '0 2px 10px rgba(0,0,0,0.8)' : 'none'
                     }} className="tracking-tight leading-tight">
                         {getTranslatedText('title')}
                     </h1>
@@ -246,8 +246,8 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                     <p style={{
                         ...descStyle,
                         ...getEntranceStyle(1),
-                        textShadow: isFullBg ? '0 1px 6px rgba(0,0,0,0.3)' : 'none'
-                    }} className={`opacity-60 ${layout.alignment === 'center' ? 'mx-auto' : ''}`}>
+                        textShadow: isFullBg ? '0 1px 8px rgba(0,0,0,0.6)' : 'none'
+                    }} className={`opacity-80 ${layout.alignment === 'center' ? 'mx-auto' : ''}`}>
                         {getTranslatedText('description')}
                     </p>
 
@@ -259,21 +259,22 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
 
                 {/* Split Image Media (Hidden on mobile) */}
                 {isSplit && (
-                    <div style={getEntranceStyle(3)} className={`${isMobileMode ? 'hidden' : ''} ${(effectivePos === 'top' || effectivePos === 'bottom') ? 'w-full max-w-4xl' : 'w-full md:w-1/2'} relative`}>
+                    <div style={getEntranceStyle(3)} className={`${isMobileMode ? 'hidden' : ''} ${(effectivePos === 'top' || effectivePos === 'bottom') ? 'w-full max-w-5xl' : 'w-full md:w-3/5'} relative`}>
                         <div
-                            className={`relative overflow-hidden ${shapeClass} ${isMobileMode ? 'max-h-[250px]' : ''}`}
+                            className={`relative overflow-hidden ${shapeClass} ${isMobileMode ? 'max-h-[300px]' : ''}`}
                             style={{
-                                boxShadow: `0px ${parseFloat(gl06[0]?.value || '10')}px ${parseFloat(gl06[1]?.value || '20')}px rgba(0,0,0,${parseFloat(gl06[0]?.value || '10') / 200})`,
-                                border: `${gl06[4]?.value || '0'}px solid rgba(0,0,0,${parseFloat(gl06[5]?.value || '10') / 100})`,
-                                animation: overrides.media?.levitation ? `levitate-${id} ${overrides.media?.levitationSpeed || 3}s ease-in-out infinite` : 'none'
+                                boxShadow: `0px ${parseFloat(gl06[0]?.value || '10')}px ${parseFloat(gl06[1]?.value || '40')}px rgba(0,0,0,0.3)`,
+                                border: `${gl06[4]?.value || '1'}px solid rgba(255,255,255,0.1)`,
+                                animation: overrides.media?.levitation ? `levitate-${id} ${overrides.media?.levitationSpeed || 3}s ease-in-out infinite` : 'none',
+                                backdropFilter: 'blur(10px)',
                             }}
                         >
                             <img
                                 src={overrides.media.imageUrl}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                 style={{
                                     opacity: (overrides.media.imageOpacity || 100) / 100,
-                                    transform: `scale(${(overrides.media?.imageScale || 100) / 100})`
+                                    transform: `scale(${(overrides.media?.imageScale || 110) / 100})`
                                 }}
                                 alt="Hero media"
                             />

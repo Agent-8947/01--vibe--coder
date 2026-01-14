@@ -79,7 +79,7 @@ export const Viewer: React.FC = () => {
 
     return (
         <main
-            className="w-full min-h-screen relative overflow-x-hidden transition-colors duration-500"
+            className="w-full min-h-screen relative transition-colors duration-500"
             style={{
                 backgroundColor: 'var(--dna-bg)',
                 color: 'var(--dna-text-prim)',
@@ -136,6 +136,7 @@ export const Viewer: React.FC = () => {
           font-family: var(--dna-font-family);
           margin: 0;
           padding: 0;
+          overflow-x: hidden;
         }
 
         /* Ensure no editor UI elements are visible */
@@ -159,6 +160,7 @@ export const Viewer: React.FC = () => {
                 ) : (
                     visibleBlocks.map((block) => {
                         const BlockComponent = resolveBlock(block.type);
+                        const isNavbar = block.type?.startsWith('B01') || block.type === 'Navbar';
 
                         if (!BlockComponent) {
                             console.warn(`Block type "${block.type}" not found`);
@@ -178,9 +180,11 @@ export const Viewer: React.FC = () => {
                             >
                                 <div
                                     style={{
-                                        position: (block.type?.startsWith('B01') || block.type === 'Navbar') ? 'sticky' : 'relative',
-                                        top: (block.type?.startsWith('B01') || block.type === 'Navbar') ? 0 : 'auto',
-                                        zIndex: (block.type?.startsWith('B01') || block.type === 'Navbar') ? 1000 : 'auto'
+                                        position: isNavbar ? 'fixed' : 'relative',
+                                        top: isNavbar ? 0 : 'auto',
+                                        left: isNavbar ? 0 : 'auto',
+                                        right: isNavbar ? 0 : 'auto',
+                                        zIndex: isNavbar ? 1000 : 'auto'
                                     }}
                                 >
                                     <BlockComponent
@@ -198,6 +202,7 @@ export const Viewer: React.FC = () => {
                                         onSelect={() => { }} // No-op in viewer mode
                                     />
                                 </div>
+                                {isNavbar && <div style={{ height: `${block.localOverrides?.layout?.height || 80}px` }} />}
                             </Suspense>
                         );
                     })
