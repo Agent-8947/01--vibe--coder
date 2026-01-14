@@ -132,7 +132,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
         backgroundColor: overrides.background?.lockBackground
             ? overrides.background.fixedColor
             : (overrides.style?.bgFill || 'transparent'),
-        padding: isMobileMode ? '40px 16px' : `${py}px ${px}px`,
+        padding: isMobileMode ? '0 0 60px 0' : `${py}px ${px}px`,
         display: 'flex',
         flexDirection: isMobileMode
             ? 'column'
@@ -258,7 +258,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                     `}>
                         <div
                             className={`relative w-full h-full overflow-hidden
-                                ${isMobileMode ? 'rounded-b-3xl' : shapeClass}
+                                ${isMobileMode ? 'rounded-none' : shapeClass}
                             `}
                             style={{
                                 boxShadow: isMobileMode ? 'none' : `0px ${parseFloat(gl06[0]?.value || '10')}px ${parseFloat(gl06[1]?.value || '40')}px rgba(0,0,0,0.3)`,
@@ -269,7 +269,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                             <img
                                 src={overrides.media.imageUrl}
                                 className={`w-full h-full object-cover transition-transform duration-1000 
-                                    ${isMobileMode ? 'scale-100' : 'group-hover:scale-110'}
+                                    ${isMobileMode ? 'scale-100 object-top grayscale brightness-[0.7] contrast-[1.1]' : 'group-hover:scale-110'}
                                 `}
                                 style={{
                                     opacity: imageOpacity,
@@ -292,9 +292,9 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                     <h1 style={{
                         ...titleStyle,
                         ...getEntranceStyle(0),
-                        fontSize: isMobileMode ? '3.5rem' : undefined,
-                        lineHeight: isMobileMode ? '0.9' : undefined,
-                    }} className="font-black tracking-tighter mb-6">
+                        fontSize: isMobileMode ? '2.5rem' : undefined,
+                        lineHeight: isMobileMode ? '0.95' : undefined,
+                    }} className="font-black tracking-tighter mb-6 text-5xl sm:text-7xl md:text-8xl">
                         {getTranslatedText('title')}
                     </h1>
 
