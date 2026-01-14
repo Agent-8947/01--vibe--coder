@@ -269,7 +269,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                             <img
                                 src={overrides.media.imageUrl}
                                 className={`w-full h-full object-cover transition-transform duration-1000 
-                                    ${isMobileMode ? 'scale-100 object-top grayscale brightness-[0.7] contrast-[1.1]' : 'group-hover:scale-110'}
+                                    ${isMobileMode ? 'scale-100 object-top grayscale brightness-[0.85] contrast-[1.1]' : 'group-hover:scale-110'}
                                 `}
                                 style={{
                                     opacity: imageOpacity,
@@ -294,7 +294,7 @@ export const Hero: React.FC<HeroProps> = ({ id, type, localOverrides: overrides,
                         ...getEntranceStyle(0),
                         fontSize: isMobileMode ? '2.5rem' : undefined,
                         lineHeight: isMobileMode ? '0.95' : undefined,
-                    }} className="font-black tracking-tighter mb-6 text-5xl sm:text-7xl md:text-8xl">
+                    }} className="font-black tracking-tighter mb-6 text-5xl sm:text-6xl md:text-7xl">
                         {getTranslatedText('title')}
                     </h1>
 
