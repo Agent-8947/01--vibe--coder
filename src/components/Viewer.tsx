@@ -161,6 +161,7 @@ export const Viewer: React.FC = () => {
                     visibleBlocks.map((block) => {
                         const BlockComponent = resolveBlock(block.type);
                         const isNavbar = block.type?.startsWith('B01') || block.type === 'Navbar';
+                        const navHeight = parseInt(block.localOverrides?.layout?.height || block.localOverrides?.layout?.['F-L04'] || 80);
 
                         if (!BlockComponent) {
                             console.warn(`Block type "${block.type}" not found`);
@@ -202,7 +203,7 @@ export const Viewer: React.FC = () => {
                                         onSelect={() => { }} // No-op in viewer mode
                                     />
                                 </div>
-                                {isNavbar && <div style={{ height: `${block.localOverrides?.layout?.height || 80}px` }} />}
+                                {isNavbar && <div style={{ height: `${navHeight}px` }} />}
                             </Suspense>
                         );
                     })
